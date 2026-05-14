@@ -42,9 +42,17 @@ def get_state():
 
 def update_state(state, sha):
     content = base64.b64encode(json.dumps(state).encode()).decode()
-    github_api(f"/repos/{GITHUB_REPO}/contents/{STATE_FILE}",
-               data=json.dumps({"message": "Update seen listings", "content": content, "sha": sha}).encode(),
-               method="PUT")
+    payload = json.dumps({"message": "Update seen listings", "content": content, "sha": sha}).encode()
+    for attempt in range(3):
+        try:
+            github_api(f"/repos/{GITHUB_REPO}/contents/{STATE_FILE}", data=payload, method="PUT")
+            return
+        except Exception as e:
+            if attempt == 2:
+                raise
+            import time
+            print(f"update_state tentative {attempt+1} echouee ({e}), retry dans 10s...")
+            time.sleep(10)
 
 def create_issue(new_bienveo, new_havitat):
     total = len(new_bienveo) + len(new_havitat)
