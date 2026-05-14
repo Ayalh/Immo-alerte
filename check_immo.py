@@ -58,6 +58,7 @@ def create_issue(new_bienveo, new_havitat):
             lines.append(f"### {l['title']}")
             lines.append(f"- **Prix :** {l['price']} EUR")
             lines.append(f"- **Type :** {l['type']}")
+            lines.append(f"- **Ville :** {l['ville']}")
             lines.append(f"- **Lien :** {l['url']}")
             lines.append("")
     if new_havitat:
@@ -85,11 +86,14 @@ def fetch_bienveo():
     listings = []
     for h in hits:
         src = h["_source"]
+        ville_data = src.get("data", {}).get("ville", {})
+        ville = ville_data.get("value", "") if isinstance(ville_data, dict) else ""
         listings.append({
             "id": str(src.get("id", "")),
             "title": src.get("title", "Sans titre"),
             "price": src.get("price", 0),
             "type": src.get("type", ""),
+            "ville": ville,
             "url": f"https://www.bienveo.fr/annonce/{src.get('id', '')}"
         })
     return listings
