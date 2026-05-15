@@ -102,7 +102,7 @@ def fetch_bienveo():
             "price": src.get("price", 0),
             "type": src.get("type", ""),
             "ville": ville,
-            "url": f"https://www.bienveo.fr/annonce/{src.get('id', '')}"
+            "url": f"https://www.bienveo.fr/rechercher/{src.get('id', '')}"
         })
     return listings
 
